@@ -1,0 +1,38 @@
+Potential relevent parts
+
+1.9 perfec thermal contact 24
+3.2 slabs 92
+3.7 steady periodic temperature in composite slabs 109
+4.6 141 Cooling fins
+4.13 composite wire 156
+12.8 composite solids 319
+14.6 composite regions 363
+14.12 the infinite composite solid. unit instantaeneous point sorce at 14.12
+15.3 heat regenerators and heat exchangers
+15.4 heat flow through systes in parallel
+15.9 non-homoheneous solids
+15.10 the heating of a chain of radiating slabs. Laminated materials
+16.4 steady flow in composite media 425
+
+
+23
+	Talks about contact
+	
+87-89
+	refers to 58
+	infinite composite rod
+92
+	resistance of contact
+141-143
+	cooling fins
+156
+	steady flow of heat in a composite wire
+190
+	Not relevent: cylindar
+193-194
+	Not relevent: cylindar
+319-326
+	probably most related section
+363-365
+375
+398
