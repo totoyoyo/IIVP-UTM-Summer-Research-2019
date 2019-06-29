@@ -1,0 +1,331 @@
+\documentclass[11pt,reqno,oneside,a4paper]{article}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{esint}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{verbatim}
+\usepackage{eucal}
+\usepackage{mathrsfs}
+\usepackage[hmargin = 1in,vmargin=1in]{geometry}
+\usepackage[parfill]{parskip}
+
+
+
+\setlength{\parskip}{2ex}
+\pagestyle{fancy}
+
+\lhead{Notes on Finding the Adjoint of Interface Problems}
+
+\newtheorem{theorem}{Theorem}
+
+
+\begin{document}
+	
+\section*{Demonstration of Method}
+To find out more about the adjoint of a problem, we will be using Green's formula, which is just integration by parts. We will demonstrate this method using an example. Let $L$ be a formal differential operator defined by $Lu = -u''$ with smooth functions $u$. We will define another operator $S$ which is simply $L$ but restricted to a certain domain, that is $S = L|_{\text{Dom}(S)}$. This is done so that we can specify the conditions of the problem that we are concerned about. As an example, we will consider a simple problem with 2 boundary conditions:
+$\text{Dom}(S) = \{u\in C^\infty[0,1] \text{ s.t. } u(0) = 0, u(1) = 0\}$
+
+Now, by definition, $S^*$ is the adjoint of $S$ iff $\langle Su,v \rangle = \langle u,S^*v \rangle.$ For convenience, we will define the inner product in the usual way, by integration from 0 to 1. Note that we have not explicitly defined what exactly $v$ is, because the objective of this method is to find this out! So,
+\begin{align*}
+	\langle Su,v \rangle &= \int_{0}^{1}(Lu)(x)\overline{v(x)}dx \\
+	&= \int_{0}^{1}(-u'')(x)\overline{v(x)}dx \\
+	&= \left[u(x)\overline{v'(x)} - u'(x)\overline{v(x)}\right]_{x = 0}^{x=1} + \int_{0}^{1}(u)(x)\overline{-v''(x)}dx\\
+	&= \left[u(1)\overline{v'(1)} - u'(1)\overline{v(1)} -u(0)\overline{v'(0)} + u'(0)\overline{v(0)}\right] + \int_{0}^{1}(u)(x)\overline{-v''(x)}dx
+\end{align*}
+We want the right side of this equation to be $\langle u,S^*v \rangle$, and the likely candidate of that is $\int_{0}^{1}(u)(x)\overline{-v''(x)}dx$, because it very much resembles what we started with, i.e $\int_{0}^{1}(-u'')(x)\overline{v(x)}dx$. For that to be the case, however, we would need the front term $\left[u(x)\overline{v'(x)} - u'(x)\overline{v(x)}\right]_{x = 0}^{x=1}$ to be 0. From the domain of $S$, we know that $u(0) = 0, u(1) = 0$, so we can cancel a couple of terms to get
+$$ \langle Su,v \rangle = \left[ - u'(1)\overline{v(1)} + u'(0)\overline{v(0)}\right] + \int_{0}^{1}(u)(x)\overline{-v''(x)}dx$$
+Now, we need to think about what conditions we need to impose on $v$ so that $\left[ - u'(1)\overline{v(1)} + u'(0)\overline{v(0)}\right] = 0$ as we want. This will tell us about the domain of $S^*$. Obviously, the conditions we need are $v(1) = 0$ and $v(0) = 0$. So, it happens to be that $S^*$ does the same thing as $S$ and $\text{Dom}(S^*) = \{v\in C^\infty[0,1] \text{ s.t. } v(0) = 0, v(1) = 0\}$, which is the same as $\text{Dom}(S)$.
+
+Using this Green's formula method, we come to learn that $S$ is self-adjoint. Now, before we start applying this method to interface problems, let's look at the problems that arise when we try to do the same thing as above with multipoint problems.
+
+
+
+
+
+\section*{Challenges of Green's formula with Multipoint Problems}
+To start, we will define the operators $L$ and $S$ just as we did earlier. Let $Lu = (-i\partial_x)^2u$ and let $S = L|_{\text{Dom}(S)}$ with
+$\text{Dom}(S) = \{u\in C^\infty[0,2] \text{ s.t. } u(0) = 0, u(2) = u(1)\}$. Doing the method as done earlier:
+\begin{align*}
+\langle Su,v \rangle &= \int_{0}^{2}(Lu)(x)\overline{v(x)}dx \\
+&= \int_{0}^{2}(-u'')(x)\overline{v(x)}dx \\
+&= \left[u(x)\overline{v'(x)} - u'(x)\overline{v(x)}\right]_{x = 0}^{x=2} + \int_{0}^{2}(u)(x)\overline{-v''(x)}dx\\
+&= \left[u(2)\overline{v'(2)} - u'(2)\overline{v(2)} -u(0)\overline{v'(0)} + u'(0)\overline{v(0)}\right] + \int_{0}^{2}(u)(x)\overline{-v''(x)}dx
+\end{align*}
+Now, we can use the conditions earlier, namely $u(0) = 0, u(2) = u(1)$, to simplify the equations to 
+$$ \langle Su,v \rangle = \left[u(1)\overline{v'(2)} - u'(2)\overline{v(2)} + u'(0)\overline{v(0)}\right] + \int_{0}^{2}(u)(x)\overline{-v''(x)}dx.$$ If we keep going with this, then the domain of $S^*$ will have to be $\text{Dom}(S^*) = \{v\in C^\infty[0,2] \text{ s.t. } v(0) = 0, v(2) = 0, v'(2) = 0\}$. However, this is a little odd, because here we have 3 conditions for $v$, whereas we started with just 2 conditions of $u$. So, our adjoint is incorrect, because in fact there are some assumptions that we did not consider. We assumed that $v\in C^\infty[0,2]$! 
+
+To illustrate this issue, let us use the Green's formula again but with some modifications to how we defined the domain of $S$:
+\begin{multline*}
+	\text{Dom}(S) = \{u:[0,2] \to \mathbb{C} \text{ s.t. } u|_{[0,1)} \in C^\infty[0,1], u|_{(1,2]} \in C^\infty[1,2],\\ u(0^+) = 0, u(2^-) = u(1^+), u(1^+)=u(1^-), u'(1^+)=u'(1^-)\}.
+\end{multline*} 
+This definition is actually equivalent to the previously defined $\text{Dom}(S)$, but we just made a few assumptions about the continuity of $u$ more explicit. When we start talking about multipoint problems or interface problems, we can't always assume $u\in C^\infty[0,2]$, and often problems with discontinuities give rise to more interesting adjoints. If say, a discontinuity exists at $x=1$, then the integration by parts breaks apart. With this in mind, let us use Green's formula again:
+\begin{align*}
+\langle Su,v \rangle 
+&= \int_{0}^{2}(Lu)(x)\overline{v(x)}dx \\
+&= \int_{0}^{1}(-u'')(x)\overline{v(x)}dx +     
+\int_{1}^{2}(-u'')(x)\overline{v(x)}dx \\
+&= \left[u(x)\overline{v'(x)} - 
+u'(x)\overline{v(x)}\right]_{x = 0^+}^{x=1^-} +
+\left[u(x)\overline{v'(x)} - 
+u'(x)\overline{v(x)}\right]_{x = 1^+}^{x=2^-} + \int_{0}^{1}(u)(x)\overline{-v''(x)}dx  \\ &\quad +\int_{1}^{2}(u)(x)\overline{-v''(x)}dx\\
+&= \left[u(1^-)\overline{v'(1^-)} - 
+u'(1^-)\overline{v(1^-)} -
+u(0^+)\overline{v'(0^+)} + 
+u'(0^+)\overline{v(0^+)}\right] \\ &\quad +
+\left[u(2^-)\overline{v'(2^-)} - 
+u'(2^-)\overline{v(2^-)} -
+u(1^+)\overline{v'(1^+)} + 
+u'(1^+)\overline{v(1^+)}\right]+ 
+\int_{0}^{2}(u)(x)\overline{-v''(x)}dx
+\end{align*}
+Notice that the only different thing we did was to simply split up the integral into two parts, from 0 to 1 and from 1 to 2. Then we do integration by parts on those two seperately, which can be done because we can still assume that $u$ and $v$ continuous at least within those domains. Then canceling and replacing terms with the 4 multipoint conditions $u(0^+) = 0, u(2^-) = u(1^+), u(1^+)=u(1^-), u'(1^+)=u'(1^-)$, rearranging them in a readable way, we get:
+%\begin{multline*}
+%	\langle Su,v \rangle = \left[u(1^-)\overline{v'(1^-)} - u'(1^-)\overline{v(1^-)} + u'(0^+)\overline{v(0^+)}\right] \\
+%	+ \left[u(1^-)\overline{v'(2^-)} - u'(2^-)\overline{v(2^-)} -u(1^-)\overline{v'(1^+)} + u'(1^-)\overline{v(1^+)}\right]+ \int_{0}^{2}(u)(x)\overline{-v''(x)}dx
+%\end{multline*}
+%\begin{multline*}
+%	\langle Su,v \rangle = \left[
+%	u(1^-)\overline{v'(1^-)} 
+%	+ u(1^-)\overline{v'(2^-)} 
+%	- u(1^-)\overline{v'(1^+)} \\
+%	- u'(1^-)\overline{v(1^-)} 
+%	+ u'(1^-)\overline{v(1^+)} \\
+%	+ u'(0^+)\overline{v(0^+)}
+%	- u'(2^-)\overline{v(2^-)} \right]
+%	+ \int_{0}^{2}(u)(x)\overline{-v''(x)}dx
+%\end{multline*}
+\begin{align*}
+\langle Su,v \rangle 
+&= u(1^-)\overline{v'(1^-)} 
++ u(1^-)\overline{v'(2^-)} 
+- u(1^-)\overline{v'(1^+)} \\&\quad 
+- u'(1^-)\overline{v(1^-)} 
++ u'(1^-)\overline{v(1^+)} \\&\quad 
++ u'(0^+)\overline{v(0^+)}
+- u'(2^-)\overline{v(2^-)}
++ \int_{0}^{2}(u)(x)\overline{-v''(x)}dx
+\end{align*}
+The first line has terms involving $u(1^-)$; the second line has terms involving $u'(1^-)$; and the last line the other terms. If we want the terms outside the integral to be 0, then we can specify what $v$ should be by
+\begin{multline*}
+	\text{Dom}(S^*) = \{v:[0,2] \to \mathbb{C} \text{ s.t. } v|_{[0,1)} \in C^\infty[0,1], v|_{(1,2]} \in C^\infty[1,2],\\ v(0^+) = 0, v(2^-) = 0, v'(1^-)=v'(1^+) - v'(2^-), v(1^-)=v(1^+)\}.
+\end{multline*}
+Notice that now, we have 4 conditions on $v$, which correspond to the 4 conditions on $u$ we had earlier. So, we have arrived at the correct adjoint of $S$.
+
+Now at this point, one may question why this domain of $S^*$ is preferable to the ``incorrect" domain we found earlier. This is because we are trying to find the domain of the adjoint that assumes the least about $v$. In the incorrect domain, if we were to explicitly write out the assumptions about continuity, then we will realize that there are actually 5 conditions instead of 3:
+\begin{multline*}
+\text{(Incorrect)Dom}(S^*) = \{v:[0,2] \to \mathbb{C} \text{ s.t. } v|_{[0,1)} \in C^\infty[0,1], v|_{(1,2]} \in C^\infty[1,2],\\ v(0^+) = 0, v(2^-) = 0, v'(2^-) = 0, v'(1^-)=v'(1^+), v(1^-)=v(1^+)\}.
+\end{multline*}
+Yet, if we were to substitute these conditions into the above derivations, the terms outside the integral would still cancel to 0. However, we still deem this incorrect because it assumes more about $v$ than necessary. With this in mind, we can start applying the Green's formula onto interface problems.
+
+
+\section*{Green's formula with Interface Problems and Decoupling}
+Let us try doing the same thing we did but with a interface problem. Interface problems are pretty similar to multipoint problems except for 2 key differences:
+\begin{itemize}
+	\item The problem can have different differential operators in each interval of $x$.
+	\item Each interface condition of the problem have to be limited to an interface, i.e a condition like $v(1^-)=v(2^-)$ cannot exist, but $v(1^-)=v'(1^+)$ is ok.
+\end{itemize}
+So we can't really say that the interface problem is a subset of multipoint points, nor is it a more generalized problem. We can just say that it is a different problem.
+
+We will start with a simple example of an interface problem. Again, to specify the problem all we need to do is define the operator and its domain. Let 
+\[
+Lu(x)= 
+\begin{cases}
+(-i\partial_x)u(x),& \text{if } 0 < x < 1\\
+(-i\partial_x)^2u(x), & \text{if } 1 < x <2
+\end{cases}
+\]
+and let $S = L|_{\text{Dom}(S)}$ with
+\begin{multline*}
+\text{Dom}(S) = \{u:[0,2] \to \mathbb{C} \text{ s.t. } u|_{[0,1)} \in C^\infty[0,1], u|_{(1,2]} \in C^\infty[1,2],\\ u(0^+) = 0, u(1^+)=u(1^-), u(2^-)=0\}.
+\end{multline*} 
+
+Now one thing to note before we even start finding the adjoint of this. Notice how this problem can be decoupled into two problems. We have a 1st order differential operator on the domain of $x$ from 0 to 1, and a 2nd order differential operator on the domain of $x$ from 1 to 2. 
+However, since we know the condition $u(0^+) = 0$, we can simply solve for $u$ in the first domain of $x$ from 1 to 2 without knowing anything about the 2nd domain! Afterwards, we can express $u(1^-)$ with our solution and then solve for $u$ in the second domain with other conditions $u(1^+)=u(1^-)$ and $u(2^-)=0$. 
+We have found that this behavior of being able to decouple these problems seem to appear if and only if we are dealing with a 1st order differential operator as part of the problem.
+Note that it is of no use to us to have any conditions involving any derivatives of $u$ in the first domain, because only the first order differential operator is applied there. This will become clear soon. With this in mind, we cannot have 3 conditions such that the problem above cannot be decoupled
+
+
+
+Nevertheless, we can still use Green's formula to find the adjoint of $S$:
+\begin{align*}
+\langle Su,v \rangle 
+&= \int_{0}^{2}(Lu)(x)\overline{v(x)}dx \\
+&= \int_{0}^{1}(-iu')(x)\overline{v(x)}dx +     
+   \int_{1}^{2}(-u'')(x)\overline{v(x)}dx \\
+&= -i\left[u(x)\overline{v(x)}\right]_{x = 0^+}^{x=1^-} +
+   \left[u(x)\overline{v'(x)} - 
+   u'(x)\overline{v(x)}\right]_{x = 1^+}^{x=2^-} + \int_{0}^{1}(u)(x)\overline{-iv'(x)}dx  \\ &\quad +\int_{1}^{2}(u)(x)\overline{-v''(x)}dx\\
+&= \left[iu(0^+)\overline{v(0^+)} 
+   -iu(1^-)\overline{v(1^-)}\right] \\ &\quad +
+   \left[u(2^-)\overline{v'(2^-)} - 
+   u'(2^-)\overline{v(2^-)} -
+   u(1^+)\overline{v'(1^+)} + 
+   u'(1^+)\overline{v(1^+)}\right]+ 
+   \int_{0}^{2}(u)(x)\overline{L^*v(x)}dx
+\end{align*}
+Notice how there are no derivatives of $u(0+)$ or $u(1^-)$ to be found in any of the terms above, so knowing anything about them would not help us.
+Then canceling and replacing terms with the 3 conditions $u(0^+) = 0, u(1^+)=u(1^-), u(2^-)=0$, rearranging them in a readable way, we get:
+\begin{align*}
+\langle Su,v \rangle 
+&= -iu(1^-)\overline{v(1^-)}
+ - u(1^-)\overline{v'(1^+)} \\&\quad
+ - u'(2^-)\overline{v(2^-)}
+ + u'(1^+)\overline{v(1^+)}
+ + \int_{0}^{2}(u)(x)\overline{L^*v(x)}dx
+\end{align*}
+If we want the terms outside the integral to be 0, then we can specify what $v$ should be by
+\begin{multline*}
+\text{Dom}(S^*) = \{v:[0,2] \to \mathbb{C} \text{ s.t. } v|_{[0,1)} \in C^\infty[0,1], v|_{(1,2]} \in C^\infty[1,2],\\ v(1^+) = 0, v(2^-) = 0, v'(1^+)=-iv(1^-)\}.
+\end{multline*}
+Notice that this adjoint interface problem can also be decoupled. Since we know two conditions in the domain of the 2nd order operator, namely $v(1^+) = 0, v(2^-) = 0$, we can solve for $u$ in there. Then, using that solution, we can find $v'(1^+)$ and then $v(1^-)$ using the other condition, which can then be used to solve for $u$ in the domain of the 1st order operator.
+
+Being about to decouple the problem is not necessarily a bad thing. In fact, it makes the problem easier. However, those kinds of problem can be solved one after another using other means that are already well researched, while we want to look at some newer problems. 
+
+\section*{Green's formula with More Proper Interface Problems}
+Since having a first order differential operators seems to cause decoupling of the problem, let us try doing another problem with higher order equations. Let 
+\[
+Lu(x)= 
+\begin{cases}
+(-i\partial_x)^2u(x),& \text{if } 0 < x < 1\\
+(-i\partial_x)^3u(x),& \text{if } 1 < x <2
+\end{cases}
+\]
+and let $S = L|_{\text{Dom}(S)}$ with
+\begin{multline*}
+\text{Dom}(S) = \{u:[0,2] \to \mathbb{C} \text{ s.t. } u|_{[0,1)} \in C^\infty[0,1], u|_{(1,2]} \in C^\infty[1,2],\\ u(0^+) = 0, u(1^+)=u(1^-),  u'(1^+)=u'(1^-), u(2^-)=0, u'(2^-)=0\}.
+\end{multline*} 
+Since we have a second order and a third order operator, we can predict that we would need 5 conditions in total for this problem to be well-posed. Yet even with 5 conditions, this problem cannot be decoupled unlike the ones with a first order operator.
+
+Then, applying Green's formula yields:
+\begin{align*}
+\langle Su,v \rangle 
+&= \int_{0}^{2}(Lu)(x)\overline{v(x)}dx \\
+&= \int_{0}^{1}(-u'')(x)\overline{v(x)}dx 
++ \int_{1}^{2}(iu''')(x)\overline{v(x)}dx \\
+&= \left[u(x)\overline{v'(x)} 
+- u'(x)\overline{v(x)}\right]_{x = 0^+}^{x=1^-} 
++ i\left[u''(x)\overline{v(x)} 
+- u'(x)\overline{v'(x)} 
++ u(x)\overline{v''(x)}\right]_{x = 1^+}^{x=2^-}  \\ &\quad 
++ \int_{0}^{1}(u)(x)\overline{-v''(x)}dx
++ \int_{1}^{2}(u)(x)\overline{iv'''(x)}dx\\
+&= \left[u(1^-)\overline{v'(1^-)} - 
+u'(1^-)\overline{v(1^-)} -
+u(0^+)\overline{v'(0^+)} + 
+u'(0^+)\overline{v(0^+)}\right] \\ &\quad +
+i\left[u''(2^-)\overline{v(2^-)} 
+- u'(2^-)\overline{v'(2^-)} 
++ u(2^-)\overline{v''(2^-)}
+-u''(1^+)\overline{v(1^+)} 
++ u'(1^+)\overline{v'(1^+)} 
+- u(1^+)\overline{v''(1^+)}\right] \\ &\quad +
+\int_{0}^{2}(u)(x)\overline{L^*v(x)}dx
+\end{align*}
+Then canceling and replacing terms with the 5 conditions $$u(0^+) = 0, u(1^+)=u(1^-),  u'(1^+)=u'(1^-), u(2^-)=0, u'(2^-)=0,$$ rearranging them in a readable way, we get:
+\begin{align*}
+\langle Su,v \rangle 
+&= -iu(1^-)\overline{v''(1^+)}
++ u(1^-)\overline{v'(1^-)} \\&\quad
++ iu'(1^-)\overline{v'(1^+)}
+- u'(1^-)\overline{v(1^-)} \\&\quad
++ u'(0^+)\overline{v(0^+)}
++ iu''(2^-)\overline{v(2^-)}
+- iu''(1^+)\overline{v(1^+)}
++ \int_{0}^{2}(u)(x)\overline{L^*v(x)}dx
+\end{align*}
+If we want the terms outside the integral to be 0, then we can specify what $v$ should be by
+\begin{multline*}
+\text{Dom}(S^*) = \{v:[0,2] \to \mathbb{C} \text{ s.t. } v|_{[0,1)} \in C^\infty[0,1], v|_{(1,2]} \in C^\infty[1,2],\\ v(1^+) = 0, v(2^-) = 0, v(0^+) = 0, iv'(1^+) = v(1^-), v'(1^-)=iv''(1^+)\}.
+\end{multline*}
+Notice how the problem described by the adjoint is also an interface problem that cannot be decoupled. 
+
+If instead we defined the differential operators with constants $\alpha, \beta$,
+\[
+Lu(x)= 
+\begin{cases}
+\alpha(-i\partial_x)^2u(x),& \text{if } 0 < x < 1\\
+\beta(-i\partial_x)^3u(x),& \text{if } 1 < x <2
+\end{cases}
+\]
+If we work out the adjoint in the exact same way, the conditions in the adjoint interface problem will simply have those constants in front of the terms in the corresponding domain. That is because $\alpha$ corresponds to $u$ from $x=0$ to $x=1$, the $v(1^-)$ in each condition would just become $\alpha v(1^-)$. So if this was the case, given that Dom$(S)$ remains the same as before, we would know
+\begin{multline*}
+\text{Dom}(S^*) = \{v:[0,2] \to \mathbb{C} \text{ s.t. } v|_{[0,1)} \in C^\infty[0,1], v|_{(1,2]} \in C^\infty[1,2],\\ v(1^+) = 0, v(2^-) = 0, v(0^+) = 0, i\beta v'(1^+) = \alpha v(1^-), \alpha v'(1^-)=i \beta v''(1^+)\}.
+\end{multline*}
+
+\section*{Adjoints of Interface Problems with 3 Sections}
+We now move on test out how things change for interface problems with 3 sections instead of 2. Looking ahead, things should not change too much; all we need to do is another integration by parts with another section. Let us also try this out with a first order differential operator to see if the decoupling still occurs
+
+Let 
+\[
+Lu(x)= 
+\begin{cases}
+(-i\partial_x)^1u(x),& \text{if } 0 < x < 1\\
+(-i\partial_x)^2u(x),& \text{if } 1 < x <2 \\
+(-i\partial_x)^3u(x),& \text{if } 2 < x <3 \\
+\end{cases}
+\]
+and let $S = L|_{\text{Dom}(S)}$ with
+\begin{multline*}
+\text{Dom}(S) = \{u:[0,3] \to \mathbb{C} \text{ s.t. } u|_{[0,1)} \in C^\infty[0,1], u|_{(1,2]} \in C^\infty[1,2], u|_{(2,3]} \in C^\infty[2,3], \\ u''(3^-) = 0, u'(3^-) = 0, u(2^-) = u(2^+),
+u'(2^-) = u'(2^+), u'(1^+)=0, u(1^+)=u(1^-)\}.
+\end{multline*} 
+Here, with the 1st order operator, it still looks like we can decouple the problem even when we extend it beyond 2 sections. For instance, take the first 5 conditions out of the 6, $$u''(3^-) = 0, u'(3^-) = 0, u(2^-) = u(2^+),
+u'(2^-) = u'(2^+), u'(1^+)=0.$$ 
+With this, we have another smaller interface problem with 2 sections, each with a 2nd and 3rd order operator. Because we have 5 conditions here and the total order is 5, we can solve this problem without knowing anything about $u$ from $x=0$ to $x=1$. After solving this problem, we could then use our solution and the 6th condition to solve for the last section. So, it looks like the problem still decouples if it has a 1st order differential operator, even with 3 sections. 
+
+Again, we can still use Green's formula despite the issue above. This yields:
+\begin{align*}
+\langle Su,v \rangle 
+&= \int_{0}^{3}(Lu)(x)\overline{v(x)}dx \\
+&= \int_{0}^{1}(-iu')(x)\overline{v(x)}dx 
++ \int_{1}^{2}(-u'')(x)\overline{v(x)}dx 
++ \int_{2}^{3}(iu''')(x)\overline{v(x)}dx\\
+&= -i\left[u(x)\overline{v(x)}\right]_{x = 0^+}^{x=1^-} +\left[u(x)\overline{v'(x)} 
+- u'(x)\overline{v(x)}\right]_{x = 1^+}^{x=2^-} 
++ i\left[u''(x)\overline{v(x)} 
+- u'(x)\overline{v'(x)} 
++ u(x)\overline{v''(x)}\right]_{x = 2^+}^{x=3^-}  \\ &\quad 
++ \int_{0}^{1}(u)(x)\overline{-iv'(x)}dx
++ \int_{1}^{2}(u)(x)\overline{-v''(x)}dx
++ \int_{2}^{3}(u)(x)\overline{iv'''(x)}dx\\
+&= \left[iu(0^+)\overline{v(0^+)} 
+-iu(1^-)\overline{v(1^-)}\right] \\ &\quad +
+\left[u(2^-)\overline{v'(2^-)} - 
+u'(2^-)\overline{v(2^-)} -
+u(1^+)\overline{v'(1^+)} + 
+u'(1^+)\overline{v(1^+)}\right] \\ &\quad +
+i\left[u''(3^-)\overline{v(3^-)} 
+- u'(3^-)\overline{v'(3^-)} 
++ u(3^-)\overline{v''(3^-)}
+-u''(2^+)\overline{v(2^+)} 
++ u'(2^+)\overline{v'(2^+)} 
+- u(2^+)\overline{v''(2^+)}\right] \\ &\quad +
+\int_{0}^{3}(u)(x)\overline{L^*v(x)}dx
+\end{align*}
+Then canceling and replacing terms with the 6 conditions $$u''(3^-) = 0, u'(3^-) = 0, u(2^-) = u(2^+),
+u'(2^-) = u'(2^+), u'(1^+)=0, u(1^+)=u(1^-),$$ rearranging them in a readable way, we get:
+\begin{align*}
+\langle Su,v \rangle 
+&= -iu(1^-)\overline{v(1^-)}
+- u(1^-)\overline{v'(1^+)} \\&\quad
++ u(2^-)\overline{v'(2^-)}
+- iu'(2^-)\overline{v''(2^+)} \\&\quad
+- u'(2^-)\overline{v(2^-)}
++ iu'(2^-)\overline{v'(2^+)} \\&\quad
++ iu(0^+)\overline{v(0^+)}
++ iu(3^-)\overline{v''(3^-)}
+- iu''(2^+)\overline{v(2^+)}
++ \int_{0}^{3}(u)(x)\overline{L^*v(x)}dx
+\end{align*}
+If we want the terms outside the integral to be 0, then we can specify what $v$ should be by
+\begin{multline*}
+\text{Dom}(S^*) = \{v:[0,2] \to \mathbb{C} \text{ s.t. } v|_{[0,1)} \in C^\infty[0,1], v|_{(1,2]} \in C^\infty[1,2],\\ v(0^+) = 0, v''(3^-) = 0, v(2^+) = 0, iv(1^-) = -v'(1^+), v'(2^-)=iv''(2^+),v(2^-)=iv'(2^+) \}.
+\end{multline*}
+We get 6 conditions and as expected, the adjoint problem can also be decoupled in a similar fashion to the original problem. 
+
+\section*{Next Steps}
+The next step is find a generalized formula to find the adjoint of these problems without going through the integration by parts. To do so, we would want to encode the differential operators and the interface conditions, which together determine the adjoint.
+\end{document}
